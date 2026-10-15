@@ -1,95 +1,95 @@
-# So Long — Sandro's adventures
+# So Long — Sandro's Adventures
 
-> Un petit jeu d'aventure 2D sur grille, réalisé en C dans le cadre du cursus de 42.
+> A small 2D grid-based adventure game written in C as part of the 42 curriculum.
 
-Le joueur explore une carte, récupère tous les objets et rejoint la sortie. Le jeu utilise la **MiniLibX Linux** pour créer la fenêtre, afficher les tuiles et animer les sprites.
+Explore the map, collect every item, and reach the exit. The game uses **MiniLibX for Linux** to create the window, render tiles, and animate sprites.
 
-## Objectif et commandes
+## Objective and Controls
 
-- Ramasser tous les collectibles (`C`) de la carte.
-- Rejoindre la sortie (`E`) après les avoir récupérés.
-- Éviter les ennemis (`N`) : les toucher met fin à la partie.
-- Les déplacements valides sont comptabilisés et affichés dans la fenêtre ainsi que dans le terminal.
+- Collect all items (`C`) on the map.
+- Reach the exit (`E`) after collecting them all.
+- Avoid enemies (`N`): touching one ends the game.
+- Valid moves are counted and displayed both in the window and in the terminal.
 
-| Action | Touches |
+| Action | Keys |
 | --- | --- |
-| Se déplacer | Flèches directionnelles ou `W` `A` `S` `D` |
-| Quitter | `Échap` ou fermeture de la fenêtre |
+| Move | Arrow keys or `W` `A` `S` `D` |
+| Quit | `Esc` or close the window |
 
-Les murs (`1`) bloquent le passage. Les sprites du joueur, des collectibles et des ennemis sont animés. Chaque tuile mesure **64 × 64 pixels**.
+Walls (`1`) block the way. The player, collectible, and enemy sprites are animated. Each tile is **64 × 64 pixels**.
 
-## Cartes
+## Maps
 
-Une carte est un fichier texte dont le nom se termine par `.ber`. Elle doit être rectangulaire, entièrement entourée de murs et contenir uniquement les caractères suivants :
+A map is a text file with a `.ber` extension. It must be rectangular, completely surrounded by walls, and contain only the following characters:
 
-| Symbole | Signification |
+| Symbol | Meaning |
 | --- | --- |
-| `1` | Mur |
-| `0` | Sol |
-| `P` | Départ du joueur — exactement un |
-| `C` | Collectible — au moins un |
-| `E` | Sortie — exactement une |
-| `N` | Ennemi |
+| `1` | Wall |
+| `0` | Empty floor |
+| `P` | Player starting position — exactly one |
+| `C` | Collectible — at least one |
+| `E` | Exit — exactly one |
+| `N` | Enemy |
 
-Le programme vérifie également que tous les collectibles et la sortie sont accessibles depuis le départ. Une carte trop grande pour l'écran est refusée.
+The program also checks that every collectible and the exit are reachable from the starting position. Maps that are too large for the screen are rejected.
 
-Des cartes de jeu sont fournies dans `maps/gaming/` (`map1.ber`, `map2.ber`, `snail.ber`). Le dossier `maps/test_maps/` regroupe des cartes destinées à essayer différents cas.
+Playable maps are provided in `maps/gaming/` (`map1.ber`, `map2.ber`, `snail.ber`). The `maps/test_maps/` directory contains maps for testing various cases.
 
-## Compilation et lancement
+## Build and Run
 
-Le projet cible **Linux** et nécessite un compilateur C (`cc`), `make`, Git ainsi qu'un environnement graphique X11 et les dépendances de développement requises par MiniLibX.
+This project targets **Linux** and requires a C compiler (`cc`), `make`, Git, an X11 graphical environment, and the development dependencies required by MiniLibX.
 
-Depuis la racine du dépôt :
+From the repository root:
 
-1. Récupérer MiniLibX si elle n'est pas déjà présente. La cible clone le dépôt 42Paris via SSH ; un accès SSH à GitHub doit donc être configuré.
+1. Fetch MiniLibX if it is not already present. The target clones the 42Paris repository over SSH, so SSH access to GitHub must be configured.
 
 	```sh
 	make call_mlx
 	```
 
-2. Compiler le jeu et ses bibliothèques :
+2. Build the game and its libraries:
 
 	```sh
 	make
 	```
 
-3. Lancer le jeu avec une carte `.ber` :
+3. Run the game with a `.ber` map:
 
 	```sh
 	./bin/so_long maps/gaming/map1.ber
 	```
 
-Lancez le jeu depuis la racine du projet : les chemins des images XPM sont relatifs au répertoire courant.
+Run the game from the project root: XPM image paths are relative to the current working directory.
 
-### Cibles Makefile
+### Makefile Targets
 
-| Cible | Rôle |
+| Target | Description |
 | --- | --- |
-| `make` ou `make all` | Compile l'exécutable `bin/so_long` |
-| `make call_mlx` | Clone MiniLibX si son dossier n'existe pas |
-| `make clean` | Supprime les fichiers objets du projet et des bibliothèques |
-| `make fclean` | Nettoie puis supprime l'exécutable et les artefacts de `pedro_lib` |
-| `make re` | Nettoie puis recompile |
-| `make rm_mlx` | Supprime le dossier MiniLibX téléchargé |
+| `make` or `make all` | Build the `bin/so_long` executable |
+| `make call_mlx` | Clone MiniLibX if its directory does not exist |
+| `make clean` | Remove object files for the project and its libraries |
+| `make fclean` | Clean, then remove the executable and `pedro_lib` artifacts |
+| `make re` | Clean and rebuild |
+| `make rm_mlx` | Remove the downloaded MiniLibX directory |
 
-`make clean` et `make fclean` appellent le Makefile de MiniLibX : récupérez-la d'abord avec `make call_mlx` pour que ces cibles de nettoyage puissent s'exécuter.
+`make clean` and `make fclean` call the MiniLibX Makefile. Fetch MiniLibX first with `make call_mlx` so these cleanup targets can run.
 
-## Limites connues
+## Known Limitations
 
-Dans l'implémentation actuelle, entrer dans la sortie depuis le haut ne déclenche pas correctement la victoire. Pour terminer une partie, approchez la sortie depuis une autre direction.
+In the current implementation, entering the exit from above does not correctly trigger a win. To finish a game, approach the exit from another direction.
 
-## Organisation du projet
+## Project Structure
 
-- `srcs_mandatory/` — démarrage du jeu, lecture et vérification des cartes, rendu, animations, déplacements et fermeture.
-- `include/so_long.h` — structures, constantes, codes des touches et prototypes.
-- `Libraries/pedro_lib/` — bibliothèque C du projet, compilée par son propre Makefile.
-- `Textures/` — images XPM utilisées pour le décor et les animations.
-- `maps/gaming/` — cartes jouables fournies.
-- `maps/test_maps/` — cartes d'essai.
+- `srcs_mandatory/` — game startup, map loading and validation, rendering, animations, movement, and shutdown.
+- `include/so_long.h` — structures, constants, key codes, and function prototypes.
+- `Libraries/pedro_lib/` — the project's C library, built with its own Makefile.
+- `Textures/` — XPM images used for the environment and animations.
+- `maps/gaming/` — included playable maps.
+- `maps/test_maps/` — test maps.
 
 ## Technologies
 
 - C
-- MiniLibX Linux
+- MiniLibX for Linux
 - X11
-- Bibliothèque locale `pedro_lib`
+- Local `pedro_lib` library
